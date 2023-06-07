@@ -48,7 +48,7 @@ def get_mac_address(target) -> str:
     try:
         mac_addr = response[0][1].hwsrc
     except IndexError as e:
-        sys.exit(e)
+        sys.exit(f"Error when extracting MAC address. Check target IP")
     print(f"Got mac address {mac_addr}")
     return mac_addr
 
