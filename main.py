@@ -45,7 +45,10 @@ def sniff_init(target: str, spoof_ip: str) -> None:
 def get_mac_address(target) -> str:
     pkt = Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(op=1, pdst=target)
     response = srp(pkt, timeout=1, verbose=False)[0]
-    mac_addr = response[0][1].hwsrc
+    try:
+        mac_addr = response[0][1].hwsrc
+    except IndexError as e:
+        sys.exit(e)
     print(f"Got mac address {mac_addr}")
     return mac_addr
 
