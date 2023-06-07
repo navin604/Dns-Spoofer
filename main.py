@@ -10,7 +10,7 @@ from scapy.layers.l2 import Ether, ARP
 from scapy.sendrecv import srp
 from threading import Thread
 from time import sleep
-
+import signal
 
 def process_args() -> Tuple[str, str, str]:
     parser = argparse.ArgumentParser()
@@ -70,9 +70,14 @@ def arp_spoof(target_mac: str, target_ip: str, gateway: str) -> None:
         sleep(2)
 
 
+def sig_handler(signum, frame):
+    print("Ctrl + C.... Exiting")
+    sys.exit()
 
 def main() -> None:
     target_ip, spoof_ip, gateway = process_args()
+    signal.signal (signal.SIGINT, sig_handler)
+    signal.signal (signal.SIGTERM, sig_handler)
     configure_system(target_ip)
     target_mac = get_mac_address(target_ip)
     arp_init(target_mac, target_ip, gateway)
