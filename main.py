@@ -60,6 +60,7 @@ def get_mac_address(target) -> str:
 def configure_system(target: str) -> None:
     subprocess.run("echo 1 > /proc/sys/net/ipv4/ip_forward", shell=True)
     print("Enabled forwarding")
+    os.system("iptables -F")
     os.system("iptables -A FORWARD -p udp --dport 53 -j DROP")
     os.system("iptables -A FORWARD -p tcp --dport 53 -j DROP")
     print("Blocking real DNS responses from gateway!")
