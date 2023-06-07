@@ -72,7 +72,6 @@ def arp_spoof(target_mac: str, target_ip: str, gateway: str) -> None:
 
 def main() -> None:
     target_ip, spoof_ip, gateway = process_args()
-    print(target_ip, gateway, spoof_ip)
     configure_system(target_ip)
     target_mac = get_mac_address(target_ip)
     arp_init(target_mac, target_ip, gateway)
