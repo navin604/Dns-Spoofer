@@ -86,7 +86,15 @@ def sig_handler(signum, frame):
     print(".... Exiting")
     sys.exit(0)
 
+
+def check_perms():
+    if os.geteuid() != 0:
+        print("Error: Root privileges required!")
+    sys.exit(1)
+
+
 def main() -> None:
+    check_perms()
     target_ip, spoof_ip, gateway = process_args()
     signal.signal (signal.SIGINT, sig_handler)
     signal.signal (signal.SIGTERM, sig_handler)
